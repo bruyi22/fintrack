@@ -1,16 +1,60 @@
-# React + Vite
+# FinTrack 💰
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A personal finance dashboard built with React and Tailwind CSS. Track income, expenses, budgets, and visualize your spending — deployed on Vercel.
 
-Currently, two official plugins are available:
+🔗 **Live Demo:** [fintrack.vercel.app](https://fintrack.vercel.app)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Features
 
-## React Compiler
+- Add and delete income / expense transactions
+- Filter transactions by type and category
+- Interactive charts — spending by category (pie), monthly trend (line), income vs expenses (bar)
+- Budget tracker per category with progress indicators
+- Persistent state via localStorage — data survives page refresh
+- Fully responsive design with dark mode
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Tech Stack
 
-## Expanding the ESLint configuration
+- **React** (Vite) — component-based UI
+- **Tailwind CSS** — utility-first styling
+- **Recharts** — interactive data visualization
+- **Context API + useReducer** — global state management
+- **localStorage** — client-side data persistence
+- **Vercel** — deployment
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Getting Started
+
+```bash
+git clone https://github.com/bruyi22/fintrack
+cd fintrack
+npm install
+npm run dev
+```
+
+## Project Structure
+
+```
+src/
+  components/
+    SummaryCards.jsx
+    TransactionForm.jsx
+    TransactionList.jsx
+    Charts/
+      SpendingPie.jsx
+      MonthlyBar.jsx
+      TrendLine.jsx
+    BudgetTracker.jsx
+  context/
+    FinanceContext.jsx
+  hooks/
+    useTransactions.js
+    useLocalStorage.js
+  pages/
+    Dashboard.jsx
+    Transactions.jsx
+    Budget.jsx
+```
+
+## Author
+
+Bryan Navarro · [linkedin.com/in/bryan-navarro](https://linkedin.com/in/bryan-navarro) · [github.com/bruyi22](https://github.com/bruyi22)
