@@ -31,7 +31,7 @@ export default function TrendLine() {
   if (data.length === 0)
     return (
       <div className={cardEmpty}>
-        <p className="text-sm text-gray-500 dark:text-gray-500">No transactions yet</p>
+        <p className="text-sm text-gray-500 dark:text-gray-400">No transactions yet</p>
       </div>
     );
 

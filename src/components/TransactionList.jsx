@@ -36,7 +36,7 @@ export default function TransactionList() {
       </div>
 
       {filtered.length === 0 ? (
-        <p className="py-8 text-center text-sm text-gray-500 dark:text-gray-500">No transactions yet</p>
+        <p className="py-8 text-center text-sm text-gray-500 dark:text-gray-400">No transactions yet</p>
       ) : (
         <div className="flex flex-col gap-2">
           {filtered.map((t) => (
@@ -46,7 +46,7 @@ export default function TransactionList() {
             >
               <div>
                 <p className="text-sm font-medium text-gray-900 dark:text-white">{t.description}</p>
-                <p className="text-xs text-gray-500 dark:text-gray-500">
+                <p className="text-xs text-gray-500 dark:text-gray-400">
                   {t.category} · {t.date}
                 </p>
               </div>

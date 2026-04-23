@@ -31,7 +31,7 @@ export default function SpendingPie() {
   if (data.length === 0)
     return (
       <div className={cardEmpty}>
-        <p className="text-sm text-gray-500 dark:text-gray-500">No expenses yet</p>
+        <p className="text-sm text-gray-500 dark:text-gray-400">No expenses yet</p>
       </div>
     );
 
