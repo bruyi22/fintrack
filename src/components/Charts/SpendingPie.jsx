@@ -1,10 +1,16 @@
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import { useFinance } from "../../context/FinanceContext";
+import { useChartPalette } from "../../context/ThemeContext";
 
 const COLORS = ["#6366f1", "#f43f5e", "#10b981", "#f59e0b", "#3b82f6", "#8b5cf6"];
 
+const card =
+  "rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-700 dark:bg-gray-800";
+const cardEmpty = `${card} flex h-64 items-center justify-center`;
+
 export default function SpendingPie() {
   const { transactions } = useFinance();
+  const p = useChartPalette();
 
   const data = transactions
     .filter((t) => t.type === "expense")
@@ -15,16 +21,23 @@ export default function SpendingPie() {
       return acc;
     }, []);
 
+  const tooltipStyle = {
+    background: p.tooltipBg,
+    border: p.tooltipBorder === "transparent" ? "none" : `1px solid ${p.tooltipBorder}`,
+    borderRadius: "8px",
+    color: p.tooltipColor,
+  };
+
   if (data.length === 0)
     return (
-      <div className="bg-gray-800 rounded-2xl p-5 border border-gray-700 flex items-center justify-center h-64">
-        <p className="text-gray-500 text-sm">No expenses yet</p>
+      <div className={cardEmpty}>
+        <p className="text-sm text-gray-500 dark:text-gray-500">No expenses yet</p>
       </div>
     );
 
   return (
-    <div className="bg-gray-800 rounded-2xl p-5 border border-gray-700">
-      <h2 className="text-sm font-medium text-gray-400 uppercase tracking-widest mb-4">
+    <div className={card}>
+      <h2 className="mb-4 text-sm font-medium uppercase tracking-widest text-gray-600 dark:text-gray-400">
         Spending by Category
       </h2>
       <ResponsiveContainer width="100%" height={240}>
@@ -34,11 +47,8 @@ export default function SpendingPie() {
               <Cell key={i} fill={COLORS[i % COLORS.length]} />
             ))}
           </Pie>
-          <Tooltip
-            formatter={(val) => [`$${val.toFixed(2)}`, ""]}
-            contentStyle={{ background: "#1f2937", border: "none", borderRadius: "8px", color: "#e5e7eb" }}
-          />
-          <Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: "12px", color: "#9ca3af" }} />
+          <Tooltip formatter={(val) => [`$${val.toFixed(2)}`, ""]} contentStyle={tooltipStyle} />
+          <Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: "12px", color: p.legendColor }} />
         </PieChart>
       </ResponsiveContainer>
     </div>
