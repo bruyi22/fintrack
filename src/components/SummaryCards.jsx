@@ -7,16 +7,23 @@ export default function SummaryCards() {
   const { balance, totalIncome, totalExpenses } = useFinance();
 
   const cards = [
-    { label: "Balance", value: balance, color: balance >= 0 ? "text-emerald-400" : "text-red-400", bg: "bg-gray-800" },
-    { label: "Income", value: totalIncome, color: "text-emerald-400", bg: "bg-gray-800" },
-    { label: "Expenses", value: totalExpenses, color: "text-red-400", bg: "bg-gray-800" },
+    {
+      label: "Balance",
+      value: balance,
+      color: balance >= 0 ? "text-emerald-600 dark:text-emerald-400" : "text-red-600 dark:text-red-400",
+    },
+    { label: "Income", value: totalIncome, color: "text-emerald-600 dark:text-emerald-400" },
+    { label: "Expenses", value: totalExpenses, color: "text-red-600 dark:text-red-400" },
   ];
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+    <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
       {cards.map((c) => (
-        <div key={c.label} className={`${c.bg} rounded-2xl p-5 border border-gray-700`}>
-          <p className="text-sm text-gray-400 mb-1">{c.label}</p>
+        <div
+          key={c.label}
+          className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-700 dark:bg-gray-800"
+        >
+          <p className="mb-1 text-sm text-gray-600 dark:text-gray-400">{c.label}</p>
           <p className={`text-2xl font-semibold ${c.color}`}>{fmt(c.value)}</p>
         </div>
       ))}

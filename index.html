@@ -5,6 +5,18 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>fintrack</title>
+    <script>
+      (function () {
+        try {
+          var k = "fintrack-theme";
+          var v = localStorage.getItem(k);
+          if (v === "dark") document.documentElement.classList.add("dark");
+          else if (v === "light") document.documentElement.classList.remove("dark");
+          else if (window.matchMedia("(prefers-color-scheme: dark)").matches)
+            document.documentElement.classList.add("dark");
+        } catch (e) {}
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
