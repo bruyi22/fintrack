@@ -13,7 +13,7 @@ export default function SpendingPie() {
   const p = useChartPalette();
 
   const data = transactions
-    .filter((t) => t.type === "expense")
+    .filter((t) => t.type !== "income")
     .reduce((acc, t) => {
       const existing = acc.find((i) => i.name === t.category);
       if (existing) existing.value += t.amount;
@@ -31,7 +31,7 @@ export default function SpendingPie() {
   if (data.length === 0)
     return (
       <div className={cardEmpty}>
-        <p className="text-sm text-gray-500 dark:text-gray-500">No expenses yet</p>
+        <p className="text-sm text-gray-500 dark:text-gray-400">No expenses yet</p>
       </div>
     );
 

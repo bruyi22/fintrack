@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useFinance } from "../context/FinanceContext";
 
+const CATEGORIES = ["Food", "Rent", "Transport", "Entertainment", "Health", "Other"];
+
 const fmt = (n) =>
   new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(n);
 
@@ -11,32 +13,44 @@ const filterBtn = (active) =>
 
 export default function TransactionList() {
   const { transactions, deleteTransaction } = useFinance();
-  const [filter, setFilter] = useState("all");
+  const [categoryFilter, setCategoryFilter] = useState("all");
 
-  const filtered = transactions.filter((t) => (filter === "all" ? true : t.type === filter));
+  const expenseTransactions = transactions.filter((t) => t.type !== "income");
+
+  const filtered =
+    categoryFilter === "all"
+      ? expenseTransactions
+      : expenseTransactions.filter((t) => t.category === categoryFilter);
 
   return (
     <div className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-700 dark:bg-gray-800">
-      <div className="mb-4 flex items-center justify-between">
+      <div className="mb-4 flex flex-col gap-3">
         <h2 className="text-sm font-medium uppercase tracking-widest text-gray-600 dark:text-gray-400">
           Transactions
         </h2>
-        <div className="flex gap-2">
-          {["all", "income", "expense"].map((f) => (
+        <div className="flex flex-wrap gap-2">
+          <button
+            type="button"
+            onClick={() => setCategoryFilter("all")}
+            className={`rounded-lg px-3 py-1 text-xs transition-colors ${filterBtn(categoryFilter === "all")}`}
+          >
+            All
+          </button>
+          {CATEGORIES.map((c) => (
             <button
-              key={f}
+              key={c}
               type="button"
-              onClick={() => setFilter(f)}
-              className={`rounded-lg px-3 py-1 text-xs capitalize transition-colors ${filterBtn(filter === f)}`}
+              onClick={() => setCategoryFilter(c)}
+              className={`rounded-lg px-3 py-1 text-xs transition-colors ${filterBtn(categoryFilter === c)}`}
             >
-              {f}
+              {c}
             </button>
           ))}
         </div>
       </div>
 
       {filtered.length === 0 ? (
-        <p className="py-8 text-center text-sm text-gray-500 dark:text-gray-500">No transactions yet</p>
+        <p className="py-8 text-center text-sm text-gray-500 dark:text-gray-400">No transactions yet</p>
       ) : (
         <div className="flex flex-col gap-2">
           {filtered.map((t) => (
@@ -46,21 +60,12 @@ export default function TransactionList() {
             >
               <div>
                 <p className="text-sm font-medium text-gray-900 dark:text-white">{t.description}</p>
-                <p className="text-xs text-gray-500 dark:text-gray-500">
+                <p className="text-xs text-gray-500 dark:text-gray-400">
                   {t.category} · {t.date}
                 </p>
               </div>
               <div className="flex items-center gap-3">
-                <span
-                  className={`text-sm font-semibold ${
-                    t.type === "income"
-                      ? "text-emerald-600 dark:text-emerald-400"
-                      : "text-red-600 dark:text-red-400"
-                  }`}
-                >
-                  {t.type === "income" ? "+" : "-"}
-                  {fmt(t.amount)}
-                </span>
+                <span className="text-sm font-semibold text-red-600 dark:text-red-400">-{fmt(t.amount)}</span>
                 <button
                   type="button"
                   onClick={() => deleteTransaction(t.id)}

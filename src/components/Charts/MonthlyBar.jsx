@@ -7,27 +7,28 @@ const card =
 const cardEmpty = `${card} flex h-64 items-center justify-center`;
 
 export default function MonthlyBar() {
-  const { transactions } = useFinance();
+  const { transactions, monthlyIncome } = useFinance();
   const p = useChartPalette();
 
   const data = transactions
+    .filter((t) => t.type !== "income")
     .reduce((acc, t) => {
       const month = t.date.slice(0, 7);
       const label = new Date(t.date).toLocaleString("en-US", { month: "short", year: "2-digit" });
       const existing = acc.find((i) => i.month === month);
       if (existing) {
-        if (t.type === "income") existing.Income += t.amount;
-        else existing.Expenses += t.amount;
+        existing.Expenses += t.amount;
       } else {
         acc.push({
           month,
           label,
-          Income: t.type === "income" ? t.amount : 0,
-          Expenses: t.type === "expense" ? t.amount : 0,
+          Income: monthlyIncome,
+          Expenses: t.amount,
         });
       }
       return acc;
     }, [])
+    .map((row) => ({ ...row, Income: monthlyIncome }))
     .sort((a, b) => a.month.localeCompare(b.month));
 
   const tooltipStyle = {
@@ -40,7 +41,7 @@ export default function MonthlyBar() {
   if (data.length === 0)
     return (
       <div className={cardEmpty}>
-        <p className="text-sm text-gray-500 dark:text-gray-500">No transactions yet</p>
+        <p className="text-sm text-gray-500 dark:text-gray-400">No transactions yet</p>
       </div>
     );
 

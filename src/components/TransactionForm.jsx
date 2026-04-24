@@ -11,7 +11,6 @@ export default function TransactionForm() {
   const [form, setForm] = useState({
     description: "",
     amount: "",
-    type: "expense",
     category: "Food",
     date: new Date().toISOString().split("T")[0],
   });
@@ -23,7 +22,6 @@ export default function TransactionForm() {
     setForm({
       description: "",
       amount: "",
-      type: "expense",
       category: "Food",
       date: new Date().toISOString().split("T")[0],
     });
@@ -32,7 +30,7 @@ export default function TransactionForm() {
   return (
     <div className="mb-6 rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-700 dark:bg-gray-800">
       <h2 className="mb-4 text-sm font-medium uppercase tracking-widest text-gray-600 dark:text-gray-400">
-        Add Transaction
+        Add Expense
       </h2>
       <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <input
@@ -58,15 +56,11 @@ export default function TransactionForm() {
             <option key={c}>{c}</option>
           ))}
         </select>
-        <select className={fieldClass} value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value })}>
-          <option value="expense">Expense</option>
-          <option value="income">Income</option>
-        </select>
         <button
           type="submit"
           className="col-span-2 rounded-xl bg-indigo-600 py-2.5 text-sm font-medium text-white transition-colors hover:bg-indigo-500"
         >
-          Add Transaction
+          Add Expense
         </button>
       </form>
     </div>
