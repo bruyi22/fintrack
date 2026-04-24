@@ -12,7 +12,32 @@ const initialState = {
     Health: 100,
     Other: 200,
   },
+  income: { amount: 0, frequency: "monthly" },
 };
+
+/** @param {number} amount @param {"weekly"|"biweekly"|"monthly"} frequency */
+export function computeMonthlyIncome(amount, frequency) {
+  switch (frequency) {
+    case "weekly":
+      return amount * 4.33;
+    case "biweekly":
+      return amount * 2.17;
+    default:
+      return amount * 1;
+  }
+}
+
+function normalizeLoadedState(raw) {
+  const transactions = (raw.transactions || [])
+    .filter((t) => t.type !== "income")
+    .map(({ type: _type, ...rest }) => rest);
+
+  return {
+    transactions,
+    budgets: raw.budgets ?? initialState.budgets,
+    income: raw.income ?? { amount: 0, frequency: "monthly" },
+  };
+}
 
 function reducer(state, action) {
   switch (action.type) {
@@ -22,8 +47,10 @@ function reducer(state, action) {
       return { ...state, transactions: state.transactions.filter((t) => t.id !== action.payload) };
     case "SET_BUDGET":
       return { ...state, budgets: { ...state.budgets, [action.category]: action.amount } };
+    case "SET_INCOME":
+      return { ...state, income: action.payload };
     case "LOAD":
-      return action.payload;
+      return normalizeLoadedState(action.payload);
     default:
       return state;
   }
@@ -50,19 +77,29 @@ export function FinanceProvider({ children }) {
   const setBudget = (category, amount) =>
     dispatch({ type: "SET_BUDGET", category, amount });
 
-  const totalIncome = state.transactions
-    .filter((t) => t.type === "income")
-    .reduce((sum, t) => sum + t.amount, 0);
+  const setIncome = (payload) => dispatch({ type: "SET_INCOME", payload });
 
+  const monthlyIncome = computeMonthlyIncome(state.income.amount, state.income.frequency);
+
+  // Legacy rows with type "income" are excluded on load; exclude here if any slip through
   const totalExpenses = state.transactions
-    .filter((t) => t.type === "expense")
+    .filter((t) => t.type !== "income")
     .reduce((sum, t) => sum + t.amount, 0);
 
-  const balance = totalIncome - totalExpenses;
+  const balance = monthlyIncome - totalExpenses;
 
   return (
     <FinanceContext.Provider
-      value={{ ...state, addTransaction, deleteTransaction, setBudget, totalIncome, totalExpenses, balance }}
+      value={{
+        ...state,
+        addTransaction,
+        deleteTransaction,
+        setBudget,
+        setIncome,
+        monthlyIncome,
+        totalExpenses,
+        balance,
+      }}
     >
       {children}
     </FinanceContext.Provider>

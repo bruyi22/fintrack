@@ -13,7 +13,7 @@ export default function SpendingPie() {
   const p = useChartPalette();
 
   const data = transactions
-    .filter((t) => t.type === "expense")
+    .filter((t) => t.type !== "income")
     .reduce((acc, t) => {
       const existing = acc.find((i) => i.name === t.category);
       if (existing) existing.value += t.amount;

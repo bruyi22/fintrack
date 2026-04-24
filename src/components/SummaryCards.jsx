@@ -4,16 +4,20 @@ const fmt = (n) =>
   new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(n);
 
 export default function SummaryCards() {
-  const { balance, totalIncome, totalExpenses } = useFinance();
+  const { balance, monthlyIncome, totalExpenses } = useFinance();
 
   const cards = [
     {
-      label: "Balance",
+      label: "Monthly Income",
+      value: monthlyIncome,
+      color: "text-emerald-600 dark:text-emerald-400",
+    },
+    { label: "Spent", value: totalExpenses, color: "text-red-600 dark:text-red-400" },
+    {
+      label: "Remaining",
       value: balance,
       color: balance >= 0 ? "text-emerald-600 dark:text-emerald-400" : "text-red-600 dark:text-red-400",
     },
-    { label: "Income", value: totalIncome, color: "text-emerald-600 dark:text-emerald-400" },
-    { label: "Expenses", value: totalExpenses, color: "text-red-600 dark:text-red-400" },
   ];
 
   return (

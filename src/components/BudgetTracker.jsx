@@ -13,7 +13,7 @@ export default function BudgetTracker() {
   const [tempVal, setTempVal] = useState("");
 
   const spending = transactions
-    .filter((t) => t.type === "expense")
+    .filter((t) => t.type !== "income")
     .reduce((acc, t) => {
       acc[t.category] = (acc[t.category] || 0) + t.amount;
       return acc;

@@ -6,18 +6,30 @@ const card =
   "rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-700 dark:bg-gray-800";
 const cardEmpty = `${card} flex h-64 items-center justify-center`;
 
+function monthsInclusive(ymStart, ymEnd) {
+  const [ys, ms] = ymStart.split("-").map(Number);
+  const [ye, me] = ymEnd.split("-").map(Number);
+  return (ye - ys) * 12 + (me - ms) + 1;
+}
+
 export default function TrendLine() {
-  const { transactions } = useFinance();
+  const { transactions, monthlyIncome } = useFinance();
   const p = useChartPalette();
 
-  const sorted = [...transactions].sort((a, b) => a.date.localeCompare(b.date));
+  const expensesOnly = transactions.filter((t) => t.type !== "income");
+  const sorted = [...expensesOnly].sort((a, b) => a.date.localeCompare(b.date));
 
-  let running = 0;
+  const firstMonth = sorted[0]?.date.slice(0, 7);
+  let cumulative = 0;
   const data = sorted.map((t) => {
-    running += t.type === "income" ? t.amount : -t.amount;
+    cumulative += t.amount;
+    const ym = t.date.slice(0, 7);
+    const monthCount = firstMonth ? monthsInclusive(firstMonth, ym) : 1;
+    const incomeCredited = monthlyIncome * monthCount;
+    const remaining = incomeCredited - cumulative;
     return {
       date: new Date(t.date).toLocaleDateString("en-US", { month: "short", day: "numeric" }),
-      Balance: parseFloat(running.toFixed(2)),
+      Remaining: parseFloat(remaining.toFixed(2)),
     };
   });
 
@@ -38,18 +50,18 @@ export default function TrendLine() {
   return (
     <div className={card}>
       <h2 className="mb-4 text-sm font-medium uppercase tracking-widest text-gray-600 dark:text-gray-400">
-        Balance Trend
+        Remaining trend
       </h2>
       <ResponsiveContainer width="100%" height={240}>
         <LineChart data={data}>
           <CartesianGrid strokeDasharray="3 3" stroke={p.grid} />
           <XAxis dataKey="date" tick={{ fontSize: 11, fill: p.tick }} axisLine={false} tickLine={false} />
           <YAxis tick={{ fontSize: 11, fill: p.tick }} axisLine={false} tickLine={false} tickFormatter={(v) => `$${v}`} />
-          <Tooltip formatter={(val) => [`$${val.toFixed(2)}`, "Balance"]} contentStyle={tooltipStyle} />
+          <Tooltip formatter={(val) => [`$${val.toFixed(2)}`, "Remaining"]} contentStyle={tooltipStyle} />
           <ReferenceLine y={0} stroke={p.refLine} strokeDasharray="4 4" />
           <Line
             type="monotone"
-            dataKey="Balance"
+            dataKey="Remaining"
             stroke="#6366f1"
             strokeWidth={2}
             dot={{ fill: "#6366f1", r: 3 }}

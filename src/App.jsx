@@ -1,6 +1,7 @@
 import { FinanceProvider } from "./context/FinanceContext";
 import { useTheme } from "./context/ThemeContext";
 import SummaryCards from "./components/SummaryCards";
+import IncomeSetup from "./components/IncomeSetup";
 import TransactionForm from "./components/TransactionForm";
 import TransactionList from "./components/TransactionList";
 import SpendingPie from "./components/Charts/SpendingPie";
@@ -38,6 +39,8 @@ export default function App() {
           </div>
 
           <SummaryCards />
+
+          <IncomeSetup />
 
           <div className="mb-6 grid grid-cols-1 gap-6 lg:grid-cols-3">
             <SpendingPie />
