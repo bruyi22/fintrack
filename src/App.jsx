@@ -6,6 +6,7 @@ import TransactionList from "./components/TransactionList";
 import SpendingPie from "./components/Charts/SpendingPie";
 import MonthlyBar from "./components/Charts/MonthlyBar";
 import TrendLine from "./components/Charts/TrendLine";
+import BudgetTracker from "./components/BudgetTracker";
 
 function ThemeToggle() {
   const { theme, toggleTheme } = useTheme();
@@ -43,6 +44,8 @@ export default function App() {
             <MonthlyBar />
             <TrendLine />
           </div>
+
+          <BudgetTracker />
 
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
             <TransactionForm />
