@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useFinance } from "../context/FinanceContext";
-
-const CATEGORIES = ["Food", "Rent", "Transport", "Entertainment", "Health", "Other"];
+import { DEFAULT_CATEGORIES, normalizeCategory } from "../utils/categoryMeta";
 
 const fmt = (n) =>
   new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(n);
@@ -15,7 +14,13 @@ export default function TransactionList() {
   const { transactions, deleteTransaction } = useFinance();
   const [categoryFilter, setCategoryFilter] = useState("all");
 
-  const expenseTransactions = transactions.filter((t) => t.type !== "income");
+  const expenseTransactions = transactions
+    .filter((t) => t.type !== "income")
+    .map((t) => ({ ...t, category: normalizeCategory(t.category) }));
+
+  const categories = Array.from(
+    new Set([...DEFAULT_CATEGORIES, ...expenseTransactions.map((t) => t.category)])
+  );
 
   const filtered =
     categoryFilter === "all"
@@ -36,7 +41,7 @@ export default function TransactionList() {
           >
             All
           </button>
-          {CATEGORIES.map((c) => (
+          {categories.map((c) => (
             <button
               key={c}
               type="button"

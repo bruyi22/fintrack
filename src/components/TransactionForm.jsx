@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useFinance } from "../context/FinanceContext";
-
-const CATEGORIES = ["Food", "Rent", "Transport", "Entertainment", "Health", "Other"];
+import { DEFAULT_CATEGORIES, defaultCategory, normalizeCategory } from "../utils/categoryMeta";
 
 const fieldClass =
   "rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-900 placeholder-gray-500 focus:border-indigo-500 focus:outline-none dark:border-gray-700 dark:bg-gray-900 dark:text-white dark:placeholder-gray-500";
@@ -18,7 +17,11 @@ export default function TransactionForm() {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!form.description || !form.amount) return;
-    addTransaction({ ...form, amount: parseFloat(form.amount) });
+    addTransaction({
+      ...form,
+      category: normalizeCategory(form.category),
+      amount: parseFloat(form.amount),
+    });
     setForm({
       description: "",
       amount: "",
@@ -47,15 +50,19 @@ export default function TransactionForm() {
           onChange={(e) => setForm({ ...form, amount: e.target.value })}
         />
         <input type="date" className={fieldClass} value={form.date} onChange={(e) => setForm({ ...form, date: e.target.value })} />
-        <select
+        <input
           className={fieldClass}
           value={form.category}
+          list="expense-categories"
+          placeholder="Category (e.g. Auto Insurance)"
           onChange={(e) => setForm({ ...form, category: e.target.value })}
-        >
-          {CATEGORIES.map((c) => (
-            <option key={c}>{c}</option>
+        />
+        <datalist id="expense-categories">
+          {DEFAULT_CATEGORIES.map((c) => (
+            <option key={c} value={c} />
           ))}
-        </select>
+          <option value={defaultCategory} />
+        </datalist>
         <button
           type="submit"
           className="col-span-2 rounded-xl bg-indigo-600 py-2.5 text-sm font-medium text-white transition-colors hover:bg-indigo-500"

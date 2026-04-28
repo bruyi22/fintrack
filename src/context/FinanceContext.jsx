@@ -1,4 +1,5 @@
 import { createContext, useContext, useReducer, useEffect } from "react";
+import { normalizeCategory } from "../utils/categoryMeta";
 
 const FinanceContext = createContext();
 
@@ -30,7 +31,14 @@ export function computeMonthlyIncome(amount, frequency) {
 function normalizeLoadedState(raw) {
   const transactions = (raw.transactions || [])
     .filter((t) => t.type !== "income")
-    .map(({ type: _type, ...rest }) => rest);
+    .map((transaction) => {
+      const next = { ...transaction };
+      delete next.type;
+      return {
+        ...next,
+        category: normalizeCategory(next.category),
+      };
+    });
 
   return {
     transactions,
@@ -69,7 +77,10 @@ export function FinanceProvider({ children }) {
   }, [state]);
 
   const addTransaction = (tx) =>
-    dispatch({ type: "ADD_TRANSACTION", payload: { ...tx, id: Date.now() } });
+    dispatch({
+      type: "ADD_TRANSACTION",
+      payload: { ...tx, category: normalizeCategory(tx.category), id: Date.now() },
+    });
 
   const deleteTransaction = (id) =>
     dispatch({ type: "DELETE_TRANSACTION", payload: id });

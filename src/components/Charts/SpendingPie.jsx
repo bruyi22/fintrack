@@ -1,8 +1,7 @@
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import { useFinance } from "../../context/FinanceContext";
 import { useChartPalette } from "../../context/ThemeContext";
-
-const COLORS = ["#6366f1", "#f43f5e", "#10b981", "#f59e0b", "#3b82f6", "#8b5cf6"];
+import { getCategoryColor, normalizeCategory } from "../../utils/categoryMeta";
 
 const card =
   "rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-700 dark:bg-gray-800";
@@ -15,9 +14,10 @@ export default function SpendingPie() {
   const data = transactions
     .filter((t) => t.type !== "income")
     .reduce((acc, t) => {
-      const existing = acc.find((i) => i.name === t.category);
+      const categoryName = normalizeCategory(t.category);
+      const existing = acc.find((i) => i.name === categoryName);
       if (existing) existing.value += t.amount;
-      else acc.push({ name: t.category, value: t.amount });
+      else acc.push({ name: categoryName, value: t.amount, color: getCategoryColor(categoryName) });
       return acc;
     }, []);
 
@@ -43,8 +43,8 @@ export default function SpendingPie() {
       <ResponsiveContainer width="100%" height={240}>
         <PieChart>
           <Pie data={data} cx="50%" cy="50%" innerRadius={60} outerRadius={90} paddingAngle={3} dataKey="value">
-            {data.map((_, i) => (
-              <Cell key={i} fill={COLORS[i % COLORS.length]} />
+            {data.map((entry) => (
+              <Cell key={entry.name} fill={entry.color} />
             ))}
           </Pie>
           <Tooltip formatter={(val) => [`$${val.toFixed(2)}`, ""]} contentStyle={tooltipStyle} />
