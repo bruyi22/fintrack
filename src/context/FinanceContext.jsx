@@ -9,6 +9,8 @@ const initialState = {
     Rent: 1200,
     Food: 400,
     Gas: 150,
+    Electricity: 0,
+    Water: 0,
     Subscriptions: 100,
     "Car Insurance": 0,
   },

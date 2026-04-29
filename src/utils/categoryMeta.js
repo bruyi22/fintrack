@@ -4,6 +4,8 @@ const FIXED_CATEGORY_COLORS = {
   Rent: "#f43f5e",
   Food: "#6366f1",
   Gas: "#10b981",
+  Electricity: "#eab308",
+  Water: "#0ea5e9",
   Subscriptions: "#f59e0b",
   "Car Insurance": "#06b6d4",
 };
