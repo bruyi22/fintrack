@@ -66,7 +66,7 @@ export default function TransactionForm() {
           className={fieldClass}
           value={form.category}
           list="expense-categories"
-          placeholder="Category (e.g. Auto Insurance)"
+          placeholder="Category (e.g. Car Insurance)"
           onChange={(e) => setForm({ ...form, category: e.target.value })}
         />
         <datalist id="expense-categories">
