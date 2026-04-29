@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useFinance } from "../context/FinanceContext";
-import { DEFAULT_CATEGORIES, normalizeCategory } from "../utils/categoryMeta";
+import { buildExpenseCategories, normalizeCategory } from "../utils/categoryMeta";
 
 const fmt = (n) =>
   new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(n);
@@ -21,13 +21,7 @@ export default function BudgetTracker() {
       return acc;
     }, {});
 
-  const categories = Array.from(
-    new Set([
-      ...DEFAULT_CATEGORIES,
-      ...Object.keys(budgets).map((category) => normalizeCategory(category)),
-      ...Object.keys(spending),
-    ])
-  );
+  const categories = buildExpenseCategories(transactions, budgets);
 
   const handleSave = (category) => {
     const val = parseFloat(tempVal);

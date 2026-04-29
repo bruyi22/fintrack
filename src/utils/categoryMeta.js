@@ -48,6 +48,25 @@ export function normalizeCategory(category) {
   return titleCase(compact);
 }
 
+/** Same roster as Budget Tracker: defaults, every budget row, and categories seen in expense transactions */
+export function buildExpenseCategories(transactions = [], budgets = {}) {
+  const spending = {};
+  transactions
+    .filter((t) => t.type !== "income")
+    .forEach((t) => {
+      const c = normalizeCategory(t.category);
+      spending[c] = (spending[c] || 0) + t.amount;
+    });
+
+  return Array.from(
+    new Set([
+      ...DEFAULT_CATEGORIES,
+      ...Object.keys(budgets).map((k) => normalizeCategory(k)),
+      ...Object.keys(spending),
+    ])
+  ).sort((a, b) => a.localeCompare(b, undefined, { sensitivity: "base" }));
+}
+
 export function getCategoryColor(category) {
   const normalized = normalizeCategory(category);
   if (FIXED_CATEGORY_COLORS[normalized]) return FIXED_CATEGORY_COLORS[normalized];
