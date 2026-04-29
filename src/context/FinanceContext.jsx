@@ -1,20 +1,40 @@
 import { createContext, useContext, useReducer, useEffect } from "react";
-import { normalizeCategory } from "../utils/categoryMeta";
+import { DEFAULT_CATEGORIES, normalizeCategory } from "../utils/categoryMeta";
 
 const FinanceContext = createContext();
 
 const initialState = {
   transactions: [],
   budgets: {
-    Food: 400,
     Rent: 1200,
-    Transport: 150,
-    Entertainment: 100,
-    Health: 100,
-    Other: 200,
+    Food: 400,
+    Gas: 150,
+    Subscriptions: 100,
   },
   income: { amount: 0, frequency: "monthly" },
 };
+
+const LEGACY_BUDGET_CATEGORY_MAP = {
+  Transport: "Gas",
+  Entertainment: "Subscriptions",
+};
+
+function normalizeBudgets(loadedBudgets = {}) {
+  const normalized = {};
+
+  Object.entries(loadedBudgets).forEach(([category, amount]) => {
+    const nextCategory = LEGACY_BUDGET_CATEGORY_MAP[category] || normalizeCategory(category);
+    normalized[nextCategory] = (normalized[nextCategory] || 0) + amount;
+  });
+
+  DEFAULT_CATEGORIES.forEach((category) => {
+    if (typeof normalized[category] !== "number") {
+      normalized[category] = initialState.budgets[category] ?? 0;
+    }
+  });
+
+  return normalized;
+}
 
 /** @param {number} amount @param {"weekly"|"biweekly"|"monthly"} frequency */
 export function computeMonthlyIncome(amount, frequency) {
@@ -42,7 +62,7 @@ function normalizeLoadedState(raw) {
 
   return {
     transactions,
-    budgets: raw.budgets ?? initialState.budgets,
+    budgets: normalizeBudgets(raw.budgets ?? initialState.budgets),
     income: raw.income ?? { amount: 0, frequency: "monthly" },
   };
 }

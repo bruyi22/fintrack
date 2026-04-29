@@ -1,12 +1,10 @@
-const DEFAULT_CATEGORY = "Other";
+const DEFAULT_CATEGORY = "Food";
 
 const FIXED_CATEGORY_COLORS = {
-  Food: "#6366f1",
   Rent: "#f43f5e",
-  Transport: "#10b981",
-  Entertainment: "#f59e0b",
-  Health: "#3b82f6",
-  Other: "#8b5cf6",
+  Food: "#6366f1",
+  Gas: "#10b981",
+  Subscriptions: "#f59e0b",
 };
 
 export const DEFAULT_CATEGORIES = Object.keys(FIXED_CATEGORY_COLORS);
