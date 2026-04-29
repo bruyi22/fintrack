@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useFinance } from "../context/FinanceContext";
-import { DEFAULT_CATEGORIES, defaultCategory, normalizeCategory } from "../utils/categoryMeta";
+import { DEFAULT_CATEGORIES, normalizeCategory } from "../utils/categoryMeta";
 
 const fieldClass =
   "rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-900 placeholder-gray-500 focus:border-indigo-500 focus:outline-none dark:border-gray-700 dark:bg-gray-900 dark:text-white dark:placeholder-gray-500";
@@ -61,7 +61,6 @@ export default function TransactionForm() {
           {DEFAULT_CATEGORIES.map((c) => (
             <option key={c} value={c} />
           ))}
-          <option value={defaultCategory} />
         </datalist>
         <button
           type="submit"
