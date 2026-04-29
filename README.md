@@ -2,7 +2,7 @@
 
 A personal finance dashboard built with React and Tailwind CSS. Track income, expenses, budgets, and visualize your spending — deployed on Vercel.
 
-🔗 **Live Demo:** [fintrack.vercel.app](https://fintrack.vercel.app)
+🔗 **Live Demo:** [fintrack-3f0uku268-diazbnavarro-7828s-projects.vercel.app](https://fintrack-3f0uku268-diazbnavarro-7828s-projects.vercel.app/)
 
 ## Features
 
