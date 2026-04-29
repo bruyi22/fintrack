@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useFinance } from "../context/FinanceContext";
+import { DEFAULT_CATEGORIES, normalizeCategory } from "../utils/categoryMeta";
 
 const fmt = (n) =>
   new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(n);
@@ -15,9 +16,18 @@ export default function BudgetTracker() {
   const spending = transactions
     .filter((t) => t.type !== "income")
     .reduce((acc, t) => {
-      acc[t.category] = (acc[t.category] || 0) + t.amount;
+      const category = normalizeCategory(t.category);
+      acc[category] = (acc[category] || 0) + t.amount;
       return acc;
     }, {});
+
+  const categories = Array.from(
+    new Set([
+      ...DEFAULT_CATEGORIES,
+      ...Object.keys(budgets).map((category) => normalizeCategory(category)),
+      ...Object.keys(spending),
+    ])
+  );
 
   const handleSave = (category) => {
     const val = parseFloat(tempVal);
@@ -36,7 +46,8 @@ export default function BudgetTracker() {
         Budget Tracker
       </h2>
       <div className="flex flex-col gap-4">
-        {Object.entries(budgets).map(([category, budget]) => {
+        {categories.map((category) => {
+          const budget = budgets[category] ?? 0;
           const spent = spending[category] || 0;
           const pct = budget > 0 ? Math.min((spent / budget) * 100, 100) : 0;
           const over = spent > budget;
