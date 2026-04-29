@@ -1,43 +1,40 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useFinance } from "../context/FinanceContext";
-import { DEFAULT_CATEGORIES, normalizeCategory } from "../utils/categoryMeta";
+import { buildExpenseCategories, defaultCategory, normalizeCategory } from "../utils/categoryMeta";
 
 const fieldClass =
   "rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-900 placeholder-gray-500 focus:border-indigo-500 focus:outline-none dark:border-gray-700 dark:bg-gray-900 dark:text-white dark:placeholder-gray-500";
+
+const CUSTOM_CATEGORY = "__CUSTOM__";
 
 export default function TransactionForm() {
   const { addTransaction, transactions, budgets } = useFinance();
   const [form, setForm] = useState({
     description: "",
     amount: "",
-    category: "Food",
+    category: defaultCategory,
     date: new Date().toISOString().split("T")[0],
   });
 
-  const expenseTransactions = transactions
-    .filter((t) => t.type !== "income")
-    .map((t) => normalizeCategory(t.category));
-
-  const categories = Array.from(
-    new Set([
-      ...DEFAULT_CATEGORIES,
-      ...Object.keys(budgets).map((category) => normalizeCategory(category)),
-      ...expenseTransactions,
-    ])
+  const categories = useMemo(
+    () => buildExpenseCategories(transactions, budgets),
+    [transactions, budgets]
   );
+
+  const presetValue = categories.includes(form.category) ? form.category : CUSTOM_CATEGORY;
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!form.description || !form.amount) return;
     addTransaction({
       ...form,
-      category: normalizeCategory(form.category),
+      category: normalizeCategory(form.category.trim() || defaultCategory),
       amount: parseFloat(form.amount),
     });
     setForm({
       description: "",
       amount: "",
-      category: "Food",
+      category: defaultCategory,
       date: new Date().toISOString().split("T")[0],
     });
   };
@@ -56,24 +53,41 @@ export default function TransactionForm() {
         />
         <input
           type="number"
+          step="any"
           className={fieldClass}
           placeholder="Amount"
           value={form.amount}
           onChange={(e) => setForm({ ...form, amount: e.target.value })}
         />
         <input type="date" className={fieldClass} value={form.date} onChange={(e) => setForm({ ...form, date: e.target.value })} />
-        <input
-          className={fieldClass}
-          value={form.category}
-          list="expense-categories"
-          placeholder="Category (e.g. Car Insurance)"
-          onChange={(e) => setForm({ ...form, category: e.target.value })}
-        />
-        <datalist id="expense-categories">
-          {categories.map((c) => (
-            <option key={c} value={c} />
-          ))}
-        </datalist>
+        <div className="col-span-2 flex flex-col gap-2 sm:flex-row sm:items-start">
+          <select
+            className={`${fieldClass} w-full shrink-0 sm:flex-1 sm:min-w-0`}
+            aria-label="Category"
+            value={presetValue}
+            onChange={(e) => {
+              const v = e.target.value;
+              if (v === CUSTOM_CATEGORY) setForm({ ...form, category: "" });
+              else setForm({ ...form, category: v });
+            }}
+          >
+            {categories.map((c) => (
+              <option key={c} value={c}>
+                {c}
+              </option>
+            ))}
+            <option value={CUSTOM_CATEGORY}>Add new category…</option>
+          </select>
+          {presetValue === CUSTOM_CATEGORY && (
+            <input
+              className={`${fieldClass} w-full sm:flex-1 sm:min-w-0`}
+              value={form.category}
+              placeholder={`New category (${defaultCategory} if empty)`}
+              aria-label="New category name"
+              onChange={(e) => setForm({ ...form, category: e.target.value })}
+            />
+          )}
+        </div>
         <button
           type="submit"
           className="col-span-2 rounded-xl bg-indigo-600 py-2.5 text-sm font-medium text-white transition-colors hover:bg-indigo-500"

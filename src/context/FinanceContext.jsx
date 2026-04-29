@@ -71,8 +71,13 @@ function normalizeLoadedState(raw) {
 
 function reducer(state, action) {
   switch (action.type) {
-    case "ADD_TRANSACTION":
-      return { ...state, transactions: [action.payload, ...state.transactions] };
+    case "ADD_TRANSACTION": {
+      const tx = action.payload;
+      const cat = normalizeCategory(tx.category);
+      const nextBudgets = { ...state.budgets };
+      if (!(cat in nextBudgets)) nextBudgets[cat] = 0;
+      return { ...state, transactions: [tx, ...state.transactions], budgets: nextBudgets };
+    }
     case "DELETE_TRANSACTION":
       return { ...state, transactions: state.transactions.filter((t) => t.id !== action.payload) };
     case "SET_BUDGET":
