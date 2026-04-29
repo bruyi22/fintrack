@@ -6,13 +6,25 @@ const fieldClass =
   "rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-900 placeholder-gray-500 focus:border-indigo-500 focus:outline-none dark:border-gray-700 dark:bg-gray-900 dark:text-white dark:placeholder-gray-500";
 
 export default function TransactionForm() {
-  const { addTransaction } = useFinance();
+  const { addTransaction, transactions, budgets } = useFinance();
   const [form, setForm] = useState({
     description: "",
     amount: "",
     category: "Food",
     date: new Date().toISOString().split("T")[0],
   });
+
+  const expenseTransactions = transactions
+    .filter((t) => t.type !== "income")
+    .map((t) => normalizeCategory(t.category));
+
+  const categories = Array.from(
+    new Set([
+      ...DEFAULT_CATEGORIES,
+      ...Object.keys(budgets).map((category) => normalizeCategory(category)),
+      ...expenseTransactions,
+    ])
+  );
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -58,7 +70,7 @@ export default function TransactionForm() {
           onChange={(e) => setForm({ ...form, category: e.target.value })}
         />
         <datalist id="expense-categories">
-          {DEFAULT_CATEGORIES.map((c) => (
+          {categories.map((c) => (
             <option key={c} value={c} />
           ))}
         </datalist>
