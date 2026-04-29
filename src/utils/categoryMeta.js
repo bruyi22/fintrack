@@ -5,6 +5,11 @@ const FIXED_CATEGORY_COLORS = {
   Food: "#6366f1",
   Gas: "#10b981",
   Subscriptions: "#f59e0b",
+  "Car Insurance": "#06b6d4",
+};
+
+const LEGACY_CATEGORY_ALIASES = {
+  health: "Car Insurance",
 };
 
 export const DEFAULT_CATEGORIES = Object.keys(FIXED_CATEGORY_COLORS);
@@ -32,6 +37,8 @@ export function normalizeCategory(category) {
 
   const compact = category.trim().replace(/\s+/g, " ");
   if (!compact) return DEFAULT_CATEGORY;
+  const alias = LEGACY_CATEGORY_ALIASES[compact.toLowerCase()];
+  if (alias) return alias;
 
   const fixedMatch = DEFAULT_CATEGORIES.find(
     (fixed) => fixed.toLowerCase() === compact.toLowerCase()

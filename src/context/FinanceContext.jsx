@@ -10,6 +10,7 @@ const initialState = {
     Food: 400,
     Gas: 150,
     Subscriptions: 100,
+    "Car Insurance": 0,
   },
   income: { amount: 0, frequency: "monthly" },
 };
@@ -17,6 +18,7 @@ const initialState = {
 const LEGACY_BUDGET_CATEGORY_MAP = {
   Transport: "Gas",
   Entertainment: "Subscriptions",
+  Health: "Car Insurance",
 };
 
 function normalizeBudgets(loadedBudgets = {}) {
