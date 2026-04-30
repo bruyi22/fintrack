@@ -12,6 +12,8 @@ const FIXED_CATEGORY_COLORS = {
 
 const LEGACY_CATEGORY_ALIASES = {
   health: "Car Insurance",
+  other: "Food",
+  misc: "Food",
 };
 
 export const DEFAULT_CATEGORIES = Object.keys(FIXED_CATEGORY_COLORS);
