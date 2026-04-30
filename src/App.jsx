@@ -69,14 +69,18 @@ export default function App() {
           <SummaryCards />
 
           <div className="mb-6 grid grid-cols-1 gap-6 lg:grid-cols-2 lg:items-start">
-            <IncomeSetup />
-            <TransactionForm />
+            <div className="flex min-w-0 flex-col gap-6">
+              <IncomeSetup />
+              <TransactionForm />
+            </div>
+            <div className="min-w-0">
+              <SpendingPie />
+            </div>
           </div>
 
           <BudgetTracker />
 
-          <div className="mb-6 grid grid-cols-1 gap-6 lg:grid-cols-3">
-            <SpendingPie />
+          <div className="mb-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
             <MonthlyBar />
             <TrendLine />
           </div>

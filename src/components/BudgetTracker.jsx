@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useFinance } from "../context/FinanceContext";
 import { useLocale } from "../context/LocaleContext";
-import { buildExpenseCategories, normalizeCategory } from "../utils/categoryMeta";
+import { buildExpenseCategories, getCategoryColor, normalizeCategory } from "../utils/categoryMeta";
 
 const inputClass =
   "w-20 rounded-lg border border-gray-300 bg-white px-2 py-0.5 text-xs text-gray-900 focus:border-indigo-500 focus:outline-none dark:border-gray-600 dark:bg-gray-900 dark:text-white";
@@ -44,7 +44,16 @@ export default function BudgetTracker() {
           const spent = spending[category] || 0;
           const pct = budget > 0 ? Math.min((spent / budget) * 100, 100) : 0;
           const over = spent > budget;
-          const color = over ? "bg-red-500" : pct > 75 ? "bg-amber-500 dark:bg-amber-400" : "bg-indigo-500";
+          const warn = !over && pct > 75 && budget > 0;
+          const barClass = over
+            ? "bg-red-500"
+            : warn
+              ? "bg-amber-500 dark:bg-amber-400"
+              : "";
+          const barStyle =
+            over || warn
+              ? { width: `${pct}%` }
+              : { width: `${pct}%`, backgroundColor: getCategoryColor(category) };
 
           return (
             <div key={category}>
@@ -89,8 +98,8 @@ export default function BudgetTracker() {
               </div>
               <div className="h-2 overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
                 <div
-                  className={`h-full rounded-full transition-all duration-500 ${color}`}
-                  style={{ width: `${pct}%` }}
+                  className={`h-full rounded-full transition-all duration-500 ${barClass}`}
+                  style={barStyle}
                 />
               </div>
             </div>
