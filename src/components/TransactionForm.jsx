@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { useFinance } from "../context/FinanceContext";
+import { useLocale } from "../context/LocaleContext";
 import { buildExpenseCategories, defaultCategory, normalizeCategory } from "../utils/categoryMeta";
 
 const fieldClass =
@@ -9,6 +10,7 @@ const CUSTOM_CATEGORY = "__CUSTOM__";
 
 export default function TransactionForm() {
   const { addTransaction, transactions, budgets } = useFinance();
+  const { t } = useLocale();
   const [form, setForm] = useState({
     description: "",
     amount: "",
@@ -42,12 +44,12 @@ export default function TransactionForm() {
   return (
     <div className="mb-6 rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-700 dark:bg-gray-800">
       <h2 className="mb-4 text-sm font-medium uppercase tracking-widest text-gray-600 dark:text-gray-400">
-        Add Expense
+        {t("expense_title")}
       </h2>
       <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <input
           className={`${fieldClass} col-span-2`}
-          placeholder="Description"
+          placeholder={t("expense_description")}
           value={form.description}
           onChange={(e) => setForm({ ...form, description: e.target.value })}
         />
@@ -55,7 +57,7 @@ export default function TransactionForm() {
           type="number"
           step="any"
           className={fieldClass}
-          placeholder="Amount"
+          placeholder={t("expense_amount")}
           value={form.amount}
           onChange={(e) => setForm({ ...form, amount: e.target.value })}
         />
@@ -63,7 +65,7 @@ export default function TransactionForm() {
         <div className="col-span-2 flex flex-col gap-2 sm:flex-row sm:items-start">
           <select
             className={`${fieldClass} w-full shrink-0 sm:flex-1 sm:min-w-0`}
-            aria-label="Category"
+            aria-label={t("expense_categoryAria")}
             value={presetValue}
             onChange={(e) => {
               const v = e.target.value;
@@ -76,14 +78,14 @@ export default function TransactionForm() {
                 {c}
               </option>
             ))}
-            <option value={CUSTOM_CATEGORY}>Add new category…</option>
+            <option value={CUSTOM_CATEGORY}>{t("expense_addCategory")}</option>
           </select>
           {presetValue === CUSTOM_CATEGORY && (
             <input
               className={`${fieldClass} w-full sm:flex-1 sm:min-w-0`}
               value={form.category}
-              placeholder={`New category (${defaultCategory} if empty)`}
-              aria-label="New category name"
+              placeholder={t("expense_newCategoryPlaceholder")}
+              aria-label={t("expense_newCategoryAria")}
               onChange={(e) => setForm({ ...form, category: e.target.value })}
             />
           )}
@@ -92,7 +94,7 @@ export default function TransactionForm() {
           type="submit"
           className="col-span-2 rounded-xl bg-indigo-600 py-2.5 text-sm font-medium text-white transition-colors hover:bg-indigo-500"
         >
-          Add Expense
+          {t("expense_submit")}
         </button>
       </form>
     </div>

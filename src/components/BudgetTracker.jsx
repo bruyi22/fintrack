@@ -1,15 +1,14 @@
 import { useState } from "react";
 import { useFinance } from "../context/FinanceContext";
+import { useLocale } from "../context/LocaleContext";
 import { buildExpenseCategories, normalizeCategory } from "../utils/categoryMeta";
-
-const fmt = (n) =>
-  new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(n);
 
 const inputClass =
   "w-20 rounded-lg border border-gray-300 bg-white px-2 py-0.5 text-xs text-gray-900 focus:border-indigo-500 focus:outline-none dark:border-gray-600 dark:bg-gray-900 dark:text-white";
 
 export default function BudgetTracker() {
   const { transactions, budgets, setBudget } = useFinance();
+  const { t, formatMoney } = useLocale();
   const [editing, setEditing] = useState(null);
   const [tempVal, setTempVal] = useState("");
 
@@ -37,7 +36,7 @@ export default function BudgetTracker() {
   return (
     <div className="mb-6 rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-700 dark:bg-gray-800">
       <h2 className="mb-4 text-sm font-medium uppercase tracking-widest text-gray-600 dark:text-gray-400">
-        Budget Tracker
+        {t("budget_title")}
       </h2>
       <div className="flex flex-col gap-4">
         {categories.map((category) => {
@@ -69,7 +68,7 @@ export default function BudgetTracker() {
                         onClick={() => handleSave(category)}
                         className="text-xs text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300"
                       >
-                        Save
+                        {t("budget_save")}
                       </button>
                     </div>
                   ) : (
@@ -81,10 +80,11 @@ export default function BudgetTracker() {
                       }}
                       className="text-xs text-gray-600 transition-colors hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-200"
                     >
-                      {fmt(spent)} / {fmt(budget)}
+                      {formatMoney(spent, { maximumFractionDigits: 0 })} /{" "}
+                      {formatMoney(budget, { maximumFractionDigits: 0 })}
                     </button>
                   )}
-                  {over && <span className="text-xs text-red-600 dark:text-red-400">Over!</span>}
+                  {over && <span className="text-xs text-red-600 dark:text-red-400">{t("budget_over")}</span>}
                 </div>
               </div>
               <div className="h-2 overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">

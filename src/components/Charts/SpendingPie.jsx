@@ -1,5 +1,6 @@
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import { useFinance } from "../../context/FinanceContext";
+import { useLocale } from "../../context/LocaleContext";
 import { useChartPalette } from "../../context/ThemeContext";
 import { getCategoryColor, normalizeCategory } from "../../utils/categoryMeta";
 
@@ -9,6 +10,7 @@ const cardEmpty = `${card} flex h-64 items-center justify-center`;
 
 export default function SpendingPie() {
   const { transactions } = useFinance();
+  const { t, formatMoney } = useLocale();
   const p = useChartPalette();
 
   const data = transactions
@@ -31,14 +33,14 @@ export default function SpendingPie() {
   if (data.length === 0)
     return (
       <div className={cardEmpty}>
-        <p className="text-sm text-gray-500 dark:text-gray-400">No expenses yet</p>
+        <p className="text-sm text-gray-500 dark:text-gray-400">{t("chart_noExpenses")}</p>
       </div>
     );
 
   return (
     <div className={card}>
       <h2 className="mb-4 text-sm font-medium uppercase tracking-widest text-gray-600 dark:text-gray-400">
-        Spending by Category
+        {t("chart_spendingByCategory")}
       </h2>
       <ResponsiveContainer width="100%" height={240}>
         <PieChart>
@@ -47,7 +49,7 @@ export default function SpendingPie() {
               <Cell key={entry.name} fill={entry.color} />
             ))}
           </Pie>
-          <Tooltip formatter={(val) => [`$${val.toFixed(2)}`, ""]} contentStyle={tooltipStyle} />
+          <Tooltip formatter={(val) => [formatMoney(val), ""]} contentStyle={tooltipStyle} />
           <Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: "12px", color: p.legendColor }} />
         </PieChart>
       </ResponsiveContainer>
