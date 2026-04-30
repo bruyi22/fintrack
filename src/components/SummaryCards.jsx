@@ -1,20 +1,19 @@
 import { useFinance } from "../context/FinanceContext";
-
-const fmt = (n) =>
-  new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(n);
+import { useLocale } from "../context/LocaleContext";
 
 export default function SummaryCards() {
   const { balance, monthlyIncome, totalExpenses } = useFinance();
+  const { t, formatMoney } = useLocale();
 
   const cards = [
     {
-      label: "Monthly Income",
+      label: t("summary_monthlyIncome"),
       value: monthlyIncome,
       color: "text-emerald-600 dark:text-emerald-400",
     },
-    { label: "Spent", value: totalExpenses, color: "text-red-600 dark:text-red-400" },
+    { label: t("summary_spent"), value: totalExpenses, color: "text-red-600 dark:text-red-400" },
     {
-      label: "Remaining",
+      label: t("summary_remaining"),
       value: balance,
       color: balance >= 0 ? "text-emerald-600 dark:text-emerald-400" : "text-red-600 dark:text-red-400",
     },
@@ -28,7 +27,7 @@ export default function SummaryCards() {
           className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-700 dark:bg-gray-800"
         >
           <p className="mb-1 text-sm text-gray-600 dark:text-gray-400">{c.label}</p>
-          <p className={`text-2xl font-semibold ${c.color}`}>{fmt(c.value)}</p>
+          <p className={`text-2xl font-semibold ${c.color}`}>{formatMoney(c.value)}</p>
         </div>
       ))}
     </div>

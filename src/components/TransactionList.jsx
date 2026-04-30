@@ -1,9 +1,7 @@
 import { useState } from "react";
 import { useFinance } from "../context/FinanceContext";
+import { useLocale } from "../context/LocaleContext";
 import { DEFAULT_CATEGORIES, normalizeCategory } from "../utils/categoryMeta";
-
-const fmt = (n) =>
-  new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(n);
 
 const filterBtn = (active) =>
   active
@@ -12,6 +10,7 @@ const filterBtn = (active) =>
 
 export default function TransactionList() {
   const { transactions, deleteTransaction } = useFinance();
+  const { t, formatMoney } = useLocale();
   const [categoryFilter, setCategoryFilter] = useState("all");
 
   const expenseTransactions = transactions
@@ -31,7 +30,7 @@ export default function TransactionList() {
     <div className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-700 dark:bg-gray-800">
       <div className="mb-4 flex flex-col gap-3">
         <h2 className="text-sm font-medium uppercase tracking-widest text-gray-600 dark:text-gray-400">
-          Transactions
+          {t("transactions_title")}
         </h2>
         <div className="flex flex-wrap gap-2">
           <button
@@ -39,7 +38,7 @@ export default function TransactionList() {
             onClick={() => setCategoryFilter("all")}
             className={`rounded-lg px-3 py-1 text-xs transition-colors ${filterBtn(categoryFilter === "all")}`}
           >
-            All
+            {t("transactions_all")}
           </button>
           {categories.map((c) => (
             <button
@@ -55,7 +54,7 @@ export default function TransactionList() {
       </div>
 
       {filtered.length === 0 ? (
-        <p className="py-8 text-center text-sm text-gray-500 dark:text-gray-400">No transactions yet</p>
+        <p className="py-8 text-center text-sm text-gray-500 dark:text-gray-400">{t("transactions_empty")}</p>
       ) : (
         <div className="flex flex-col gap-2">
           {filtered.map((t) => (
@@ -70,7 +69,7 @@ export default function TransactionList() {
                 </p>
               </div>
               <div className="flex items-center gap-3">
-                <span className="text-sm font-semibold text-red-600 dark:text-red-400">-{fmt(t.amount)}</span>
+                <span className="text-sm font-semibold text-red-600 dark:text-red-400">-{formatMoney(t.amount)}</span>
                 <button
                   type="button"
                   onClick={() => deleteTransaction(t.id)}

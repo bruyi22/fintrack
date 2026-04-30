@@ -1,5 +1,6 @@
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, ReferenceLine } from "recharts";
 import { useFinance } from "../../context/FinanceContext";
+import { useLocale } from "../../context/LocaleContext";
 import { useChartPalette } from "../../context/ThemeContext";
 
 const card =
@@ -14,21 +15,24 @@ function monthsInclusive(ymStart, ymEnd) {
 
 export default function TrendLine() {
   const { transactions, monthlyIncome } = useFinance();
+  const { locale, t, formatMoney } = useLocale();
   const p = useChartPalette();
+  const chartLocale = locale === "es" ? "es-MX" : "en-US";
 
-  const expensesOnly = transactions.filter((t) => t.type !== "income");
+  const expensesOnly = transactions.filter((tx) => tx.type !== "income");
   const sorted = [...expensesOnly].sort((a, b) => a.date.localeCompare(b.date));
 
   const firstMonth = sorted[0]?.date.slice(0, 7);
-  let cumulative = 0;
-  const data = sorted.map((t) => {
-    cumulative += t.amount;
-    const ym = t.date.slice(0, 7);
+  const data = sorted.map((tx, index) => {
+    const cumulative = sorted
+      .slice(0, index + 1)
+      .reduce((sum, x) => sum + x.amount, 0);
+    const ym = tx.date.slice(0, 7);
     const monthCount = firstMonth ? monthsInclusive(firstMonth, ym) : 1;
     const incomeCredited = monthlyIncome * monthCount;
     const remaining = incomeCredited - cumulative;
     return {
-      date: new Date(t.date).toLocaleDateString("en-US", { month: "short", day: "numeric" }),
+      date: new Date(tx.date).toLocaleDateString(chartLocale, { month: "short", day: "numeric" }),
       Remaining: parseFloat(remaining.toFixed(2)),
     };
   });
@@ -43,24 +47,28 @@ export default function TrendLine() {
   if (data.length === 0)
     return (
       <div className={cardEmpty}>
-        <p className="text-sm text-gray-500 dark:text-gray-400">No transactions yet</p>
+        <p className="text-sm text-gray-500 dark:text-gray-400">{t("chart_noTransactions")}</p>
       </div>
     );
 
   return (
     <div className={card}>
       <h2 className="mb-4 text-sm font-medium uppercase tracking-widest text-gray-600 dark:text-gray-400">
-        Remaining trend
+        {t("chart_remainingTrend")}
       </h2>
       <ResponsiveContainer width="100%" height={240}>
         <LineChart data={data}>
           <CartesianGrid strokeDasharray="3 3" stroke={p.grid} />
           <XAxis dataKey="date" tick={{ fontSize: 11, fill: p.tick }} axisLine={false} tickLine={false} />
           <YAxis tick={{ fontSize: 11, fill: p.tick }} axisLine={false} tickLine={false} tickFormatter={(v) => `$${v}`} />
-          <Tooltip formatter={(val) => [`$${val.toFixed(2)}`, "Remaining"]} contentStyle={tooltipStyle} />
+          <Tooltip
+            formatter={(val) => [formatMoney(val), t("chart_remaining")]}
+            contentStyle={tooltipStyle}
+          />
           <ReferenceLine y={0} stroke={p.refLine} strokeDasharray="4 4" />
           <Line
             type="monotone"
+            name={t("chart_remaining")}
             dataKey="Remaining"
             stroke="#6366f1"
             strokeWidth={2}
