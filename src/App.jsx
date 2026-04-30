@@ -68,12 +68,16 @@ export default function App() {
 
           <SummaryCards />
 
-          <div className="mb-6 grid grid-cols-1 gap-6 lg:grid-cols-2 lg:items-start">
-            <div className="flex min-w-0 flex-col gap-6">
-              <IncomeSetup />
-              <TransactionForm />
+          <div className="mb-6 grid grid-cols-1 gap-6 lg:grid-cols-2 lg:items-stretch">
+            <div className="flex min-h-0 min-w-0 flex-col gap-6 lg:h-full">
+              <div className="flex min-h-0 flex-1 flex-col">
+                <IncomeSetup />
+              </div>
+              <div className="flex min-h-0 flex-1 flex-col">
+                <TransactionForm />
+              </div>
             </div>
-            <div className="min-w-0">
+            <div className="flex min-h-0 min-w-0 flex-col lg:h-full">
               <SpendingPie />
             </div>
           </div>

@@ -5,8 +5,8 @@ import { useChartPalette } from "../../context/ThemeContext";
 import { getCategoryColor, normalizeCategory } from "../../utils/categoryMeta";
 
 const card =
-  "rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-700 dark:bg-gray-800";
-const cardEmpty = `${card} flex h-64 items-center justify-center`;
+  "flex h-full min-h-0 flex-col rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-700 dark:bg-gray-800";
+const cardEmpty = `${card} min-h-[16rem] items-center justify-center lg:min-h-0`;
 
 export default function SpendingPie() {
   const { transactions } = useFinance();
@@ -39,20 +39,24 @@ export default function SpendingPie() {
 
   return (
     <div className={card}>
-      <h2 className="mb-4 text-sm font-medium uppercase tracking-widest text-gray-600 dark:text-gray-400">
+      <h2 className="mb-4 shrink-0 text-sm font-medium uppercase tracking-widest text-gray-600 dark:text-gray-400">
         {t("chart_spendingByCategory")}
       </h2>
-      <ResponsiveContainer width="100%" height={240}>
-        <PieChart>
-          <Pie data={data} cx="50%" cy="50%" innerRadius={60} outerRadius={90} paddingAngle={3} dataKey="value">
-            {data.map((entry) => (
-              <Cell key={entry.name} fill={entry.color} />
-            ))}
-          </Pie>
-          <Tooltip formatter={(val) => [formatMoney(val), ""]} contentStyle={tooltipStyle} />
-          <Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: "12px", color: p.legendColor }} />
-        </PieChart>
-      </ResponsiveContainer>
+      <div className="flex min-h-0 w-full flex-1 flex-col">
+        <div className="relative min-h-[240px] w-full flex-1">
+          <ResponsiveContainer width="100%" height="100%">
+            <PieChart>
+              <Pie data={data} cx="50%" cy="50%" innerRadius={60} outerRadius={90} paddingAngle={3} dataKey="value">
+                {data.map((entry) => (
+                  <Cell key={entry.name} fill={entry.color} />
+                ))}
+              </Pie>
+              <Tooltip formatter={(val) => [formatMoney(val), ""]} contentStyle={tooltipStyle} />
+              <Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: "12px", color: p.legendColor }} />
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
     </div>
   );
 }
