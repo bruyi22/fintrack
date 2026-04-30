@@ -79,3 +79,30 @@ export function getCategoryColor(category) {
   const hue = hash % 360;
   return `hsl(${hue} 70% 55%)`;
 }
+
+function withAlphaFromCssColor(color, alpha) {
+  if (color.startsWith("#") && (color.length === 7 || color.length === 4)) {
+    const h = color.slice(1);
+    const full =
+      h.length === 3
+        ? h
+            .split("")
+            .map((c) => c + c)
+            .join("")
+        : h;
+    const r = parseInt(full.slice(0, 2), 16);
+    const g = parseInt(full.slice(2, 4), 16);
+    const b = parseInt(full.slice(4, 6), 16);
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+  }
+  const hsl = color.match(/^hsl\((\d+)\s+(\d+)%\s+(\d+)%\)$/);
+  if (hsl) {
+    return `hsla(${hsl[1]}, ${hsl[2]}%, ${hsl[3]}%, ${alpha})`;
+  }
+  return color;
+}
+
+/** Light tint for progress-track backgrounds (e.g. budget bar base layer). */
+export function getCategoryColorTint(category, alpha = 0.22) {
+  return withAlphaFromCssColor(getCategoryColor(category), alpha);
+}

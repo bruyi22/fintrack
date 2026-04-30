@@ -42,7 +42,7 @@ export default function TransactionForm() {
   };
 
   return (
-    <div className="flex h-full min-h-0 flex-col rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-700 dark:bg-gray-800">
+    <div className="min-w-0 overflow-hidden rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-700 dark:bg-gray-800">
       <h2 className="mb-4 text-sm font-medium uppercase tracking-widest text-gray-600 dark:text-gray-400">
         {t("expense_title")}
       </h2>
