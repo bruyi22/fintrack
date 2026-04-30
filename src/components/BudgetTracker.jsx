@@ -1,7 +1,12 @@
 import { useState } from "react";
 import { useFinance } from "../context/FinanceContext";
 import { useLocale } from "../context/LocaleContext";
-import { buildExpenseCategories, getCategoryColor, normalizeCategory } from "../utils/categoryMeta";
+import {
+  buildExpenseCategories,
+  getCategoryColor,
+  getCategoryColorTint,
+  normalizeCategory,
+} from "../utils/categoryMeta";
 
 const inputClass =
   "w-20 rounded-lg border border-gray-300 bg-white px-2 py-0.5 text-xs text-gray-900 focus:border-indigo-500 focus:outline-none dark:border-gray-600 dark:bg-gray-900 dark:text-white";
@@ -50,7 +55,7 @@ export default function BudgetTracker() {
             : warn
               ? "bg-amber-500 dark:bg-amber-400"
               : "";
-          const barStyle =
+          const fillStyle =
             over || warn
               ? { width: `${pct}%` }
               : { width: `${pct}%`, backgroundColor: getCategoryColor(category) };
@@ -96,10 +101,15 @@ export default function BudgetTracker() {
                   {over && <span className="text-xs text-red-600 dark:text-red-400">{t("budget_over")}</span>}
                 </div>
               </div>
-              <div className="h-2 overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
+              <div className="relative h-2 w-full overflow-hidden rounded-full bg-gray-200/80 dark:bg-gray-700/80">
                 <div
-                  className={`h-full rounded-full transition-all duration-500 ${barClass}`}
-                  style={barStyle}
+                  aria-hidden
+                  className="absolute inset-0 rounded-full"
+                  style={{ backgroundColor: getCategoryColorTint(category) }}
+                />
+                <div
+                  className={`absolute left-0 top-0 z-10 h-full max-w-full rounded-full transition-all duration-500 ${barClass}`}
+                  style={fillStyle}
                 />
               </div>
             </div>
